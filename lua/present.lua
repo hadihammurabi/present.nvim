@@ -255,21 +255,21 @@ M.start_presentation = function(opts)
     vim.api.nvim_buf_set_lines(state.floats.footer.buf, 0, -1, false, { footer })
   end
 
-  present_keymap("n", "n", function()
+  function present_slide_next()
     state.current_slide = math.min(state.current_slide + 1, #state.parsed.slides)
     set_slide_content(state.current_slide)
-  end)
+  end
 
-  present_keymap("n", "p", function()
+  function present_slide_previous()
     state.current_slide = math.max(state.current_slide - 1, 1)
     set_slide_content(state.current_slide)
-  end)
+  end
 
-  present_keymap("n", "q", function()
+  function present_quit()
     vim.api.nvim_win_close(state.floats.body.win, true)
-  end)
+  end
 
-  present_keymap("n", "X", function()
+  function present_execute()
     local slide = state.parsed.slides[state.current_slide]
     -- TODO: Make a way for people to execute this for other languages
     local block = slide.blocks[1]
@@ -312,7 +312,12 @@ M.start_presentation = function(opts)
 
     vim.bo[buf].filetype = "markdown"
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, output)
-  end)
+  end
+
+  present_keymap("n", "n", present_slide_next)
+  present_keymap("n", "p", present_slide_previous)
+  present_keymap("n", "q", present_quit)
+  present_keymap("n", "X", present_execute)
 
   local restore = {
     cmdheight = {
