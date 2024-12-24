@@ -211,7 +211,7 @@ local foreach_float = function(cb)
   end
 end
 
-local present_keymap = function(mode, key, callback)
+M.present_keymap = function(mode, key, callback)
   vim.keymap.set(mode, key, callback, {
     buffer = state.floats.body.buf
   })
@@ -255,21 +255,21 @@ M.start_presentation = function(opts)
     vim.api.nvim_buf_set_lines(state.floats.footer.buf, 0, -1, false, { footer })
   end
 
-  function present_slide_next()
+  M.present_slide_next = function()
     state.current_slide = math.min(state.current_slide + 1, #state.parsed.slides)
     set_slide_content(state.current_slide)
   end
 
-  function present_slide_previous()
+  M.present_slide_previous = function()
     state.current_slide = math.max(state.current_slide - 1, 1)
     set_slide_content(state.current_slide)
   end
 
-  function present_quit()
+  M.present_quit = function()
     vim.api.nvim_win_close(state.floats.body.win, true)
   end
 
-  function present_execute()
+  M.present_execute = function()
     local slide = state.parsed.slides[state.current_slide]
     -- TODO: Make a way for people to execute this for other languages
     local block = slide.blocks[1]
@@ -314,10 +314,10 @@ M.start_presentation = function(opts)
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, output)
   end
 
-  present_keymap("n", "n", present_slide_next)
-  present_keymap("n", "p", present_slide_previous)
-  present_keymap("n", "q", present_quit)
-  present_keymap("n", "X", present_execute)
+  M.present_keymap("n", "n", present_slide_next)
+  M.present_keymap("n", "p", present_slide_previous)
+  M.present_keymap("n", "q", present_quit)
+  M.present_keymap("n", "X", present_execute)
 
   local restore = {
     cmdheight = {
